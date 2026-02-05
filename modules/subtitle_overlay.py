@@ -46,23 +46,31 @@ class SubtitleOverlay:
         
     def _load_font(self) -> ImageFont.FreeTypeFont:
         """
-        Load a TrueType font
+        Load a TrueType font with Korean support
         
         Returns:
             ImageFont object
         """
-        # Try common font locations
+        # Try common font locations - prioritize Korean-supporting fonts
         font_options = [
-            # macOS fonts
-            "/System/Library/Fonts/Supplemental/Arial.ttf",
+            # macOS fonts with Korean support (prioritized)
+            "/System/Library/Fonts/Supplemental/AppleSDGothicNeo.ttc",
+            "/System/Library/Fonts/AppleSDGothicNeo.ttc",
+            "/Library/Fonts/AppleGothic.ttf",
+            "/System/Library/Fonts/AppleGothic.ttf",
+            "/Library/Fonts/NanumGothic.ttf",
+            # Fallback macOS fonts
+            "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
             "/System/Library/Fonts/Helvetica.ttc",
-            "/Library/Fonts/Arial.ttf",
-            # Linux fonts
+            # Linux fonts with CJK support
+            "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
+            "/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf",
             "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-            "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
-            # Windows fonts (if running on Windows)
+            "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
+            # Windows fonts with Korean support
+            "C:\\Windows\\Fonts\\malgun.ttf",  # Malgun Gothic (Korean)
+            "C:\\Windows\\Fonts\\gulim.ttc",   # Gulim (Korean)
             "C:\\Windows\\Fonts\\arial.ttf",
-            "C:\\Windows\\Fonts\\ariblk.ttf",
         ]
         
         # Try each font
@@ -70,13 +78,13 @@ class SubtitleOverlay:
             try:
                 if Path(font_path).exists():
                     font = ImageFont.truetype(font_path, self.font_size)
-                    logger.info(f"Loaded font: {font_path}")
+                    logger.info(f"Loaded font with Korean support: {font_path}")
                     return font
             except Exception as e:
                 continue
         
         # Fallback to default font
-        logger.warning("Could not load TrueType font, using default font")
+        logger.warning("Could not load TrueType font with Korean support, using default font")
         return ImageFont.load_default()
     
     def _wrap_text(self, text: str, max_width: int, draw: ImageDraw.Draw) -> List[str]:
