@@ -32,6 +32,8 @@ class TTSGenerator:
     def __init__(
         self,
         provider: str = None,
+        language: str = 'ko',
+        voice_id: Optional[str] = None,
         google_api_key: Optional[str] = None,
         elevenlabs_api_key: Optional[str] = None
     ):
@@ -40,10 +42,14 @@ class TTSGenerator:
         
         Args:
             provider: TTS provider ('gemini' or 'elevenlabs'). If None, uses config.TTS_PROVIDER
+            language: Language code for gTTS (ko, en, ja, zh-CN, etc.)
+            voice_id: Voice ID for ElevenLabs (optional)
             google_api_key: Google API key for Gemini TTS
             elevenlabs_api_key: ElevenLabs API key
         """
         self.provider = provider or config.TTS_PROVIDER
+        self.language = language
+        self.voice_id = voice_id
         
         if self.provider == "gemini":
             # Using gTTS as fallback for Gemini TTS (no direct Gemini TTS API available)
@@ -104,14 +110,14 @@ class TTSGenerator:
             raise ImportError("gTTS package not installed. Run: pip install gtts")
         
         try:
-            # Use gTTS as fallback
-            tts = gTTS(text=text, lang='ko', slow=False)  # Change 'ko' to 'en' for English
+            # Use gTTS with specified language
+            tts = gTTS(text=text, lang=self.language, slow=False)
             
             # Save directly as mp3
             output_path = output_path.with_suffix('.mp3')
             tts.save(str(output_path))
             
-            logger.info(f"Speech generated and saved to: {output_path}")
+            logger.info(f"Speech generated in {self.language} and saved to: {output_path}")
             return output_path
             
         except Exception as e:
@@ -130,12 +136,12 @@ class TTSGenerator:
         Args:
             text: Text to convert
             output_path: Output file path
-            voice_id: ElevenLabs voice ID
+            voice_id: ElevenLabs voice ID (overrides instance voice_id)
             
         Returns:
             Path to saved audio file
         """
-        voice_id = voice_id or config.ELEVENLABS_VOICE_ID
+        voice_id = voice_id or self.voice_id or config.ELEVENLABS_VOICE_ID
         
         try:
             # Generate audio
