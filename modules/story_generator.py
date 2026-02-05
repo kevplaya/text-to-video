@@ -48,44 +48,70 @@ class StoryGenerator:
             genai.configure(api_key=self.api_key)
             self.model = genai.GenerativeModel(config.GEMINI_MODEL)
     
-    def generate_story(self, prompt: str, num_scenes: int = 6) -> Dict:
+    def generate_story(self, prompt: str, num_scenes: int = 6, language: str = 'en') -> Dict:
         """
         Generate a structured story based on user prompt
         
         Args:
             prompt: User's story topic/prompt
             num_scenes: Number of scenes to generate (default: 6)
+            language: Language code for narration (ko, en, ja, zh-CN, etc.)
             
         Returns:
             Dictionary containing story metadata and scenes
         """
-        logger.info(f"Generating story for prompt: {prompt}")
+        logger.info(f"Generating story for prompt: {prompt} (language: {language})")
         
-        # Create detailed prompt for Gemini
+        # Language name mapping
+        language_names = {
+            'ko': 'Korean (한국어)',
+            'en': 'English',
+            'ja': 'Japanese (日本語)',
+            'zh-CN': 'Chinese (中文)',
+            'zh': 'Chinese (中文)',
+            'es': 'Spanish (Español)',
+            'fr': 'French (Français)',
+            'de': 'German (Deutsch)',
+        }
+        
+        language_name = language_names.get(language, 'English')
+        
+        # Create detailed prompt for Gemini with language specification
         system_prompt = f"""Create a compelling short story based on the following topic: "{prompt}"
 
+IMPORTANT LANGUAGE REQUIREMENT:
+- Write ALL narration text in {language_name}
+- The title should also be in {language_name}
+- Image prompts can be in English (for better image generation)
+- But narration MUST be in {language_name}
+
 The story should be divided into exactly {num_scenes} scenes. For each scene, provide:
-1. A detailed visual description suitable for image generation (describe characters, setting, mood, lighting, style)
-2. A narration text that will be spoken (keep it concise, engaging, and suitable for a short video)
+1. A detailed visual description suitable for image generation (describe characters, setting, mood, lighting, style) - This can be in English
+2. A narration text that will be spoken in {language_name} (keep it concise, engaging, and suitable for a short video) - MUST be in {language_name}
 3. Duration in seconds (distribute time naturally across scenes, total should be 30-60 seconds)
 
 Output the story in the following JSON format:
 {{
-    "title": "Story Title",
-    "theme": "Brief theme description",
+    "title": "Story Title (in {language_name})",
+    "theme": "Brief theme description (in {language_name})",
     "scenes": [
         {{
             "scene_number": 1,
-            "image_prompt": "Detailed visual description for image generation",
-            "narration": "Spoken narration text for this scene",
+            "image_prompt": "Detailed visual description for image generation (can be in English)",
+            "narration": "Spoken narration text in {language_name}",
             "duration": 5
         }},
         ...
     ]
 }}
 
+CRITICAL REMINDERS:
+- Image prompts: Can be in English for better AI image generation
+- Narration text: MUST be in {language_name} - this will be spoken aloud
+- Title and theme: Should be in {language_name}
+
 Make the visual descriptions cinematic and detailed. Use artistic styles like "cinematic lighting", "digital art", "highly detailed" in the image prompts.
-Ensure the narration flows naturally from scene to scene.
+Ensure the narration in {language_name} flows naturally from scene to scene.
 """
         
         try:
