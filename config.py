@@ -44,6 +44,8 @@ def create_project_folder(project_name: str) -> Dict[str, Path]:
         'images': project_dir / 'images',
         'images_subtitled': project_dir / 'images' / 'subtitled',
         'audio': project_dir / 'audio',
+        'videos_ai': project_dir / 'videos_ai',
+        'character_dna': project_dir / 'character_dna',
         'video': project_dir / 'final_video.mp4'
     }
     
@@ -58,13 +60,48 @@ def create_project_folder(project_name: str) -> Dict[str, Path]:
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 HF_TOKEN = os.getenv("HF_TOKEN")
+GROK_API_KEY = os.getenv("GROK_API_KEY")
+KLING_API_KEY = os.getenv("KLING_API_KEY")
+KLING_API_SECRET = os.getenv("KLING_API_SECRET")
+GPT_API_KEY = os.getenv("GPT_API_KEY")
 
 # Set HuggingFace token if available
 if HF_TOKEN:
     os.environ["HF_TOKEN"] = HF_TOKEN
 
-# Model configurations  
+# Model configurations
 GEMINI_MODEL = "gemini-2.5-flash"  # Text generation model
+
+# Story generation models (with fallback)
+STORY_MODEL = os.getenv("STORY_MODEL", "gemini-2.5-flash")
+STORY_MODEL_FALLBACK = os.getenv("STORY_MODEL_FALLBACK", "gemini-2.0-flash")
+
+# Gemini image/prompt models
+GEMINI_IMAGE_MODEL = os.getenv("GEMINI_IMAGE_MODEL", "gemini-2.5-flash-image")
+GEMINI_PROMPT_REWRITE_MODEL = os.getenv("GEMINI_PROMPT_REWRITE_MODEL", "gemini-2.0-flash")
+
+# Gemini TTS
+GEMINI_TTS_MODEL = os.getenv("GEMINI_TTS_MODEL", "gemini-2.5-flash-preview-tts")
+GEMINI_TTS_VOICE = os.getenv("GEMINI_TTS_VOICE", "Kore")
+
+# Grok models
+GROK_IMAGE_MODEL = os.getenv("GROK_IMAGE_MODEL", "grok-imagine-image")
+GROK_VIDEO_MODEL = os.getenv("GROK_VIDEO_MODEL", "grok-imagine-video")
+
+# Veo model
+VEO_MODEL = os.getenv("VEO_MODEL", "veo-3.1-fast-generate-preview")
+
+# Kling models
+KLING_MODEL = os.getenv("KLING_MODEL", "kling-v3")
+KLING_API_BASE = os.getenv("KLING_API_BASE", "https://api.klingai.com")
+
+# ElevenLabs
+ELEVENLABS_MODEL_ID = os.getenv("ELEVENLABS_MODEL_ID", "eleven_v3")
+ELEVENLABS_DEFAULT_VOICE_ID = os.getenv("ELEVENLABS_DEFAULT_VOICE_ID", "iWLjl1zCuqXRkW6494ve")
+
+# Video AI polling
+VIDEO_AI_POLL_INTERVAL = int(os.getenv("VIDEO_AI_POLL_INTERVAL", "10"))
+VIDEO_AI_MAX_WAIT = int(os.getenv("VIDEO_AI_MAX_WAIT", "600"))
 
 # Image generation backends and models
 # Backend options: 'huggingface', 'imagen', 'nano-banana'

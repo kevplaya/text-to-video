@@ -1,6 +1,6 @@
 # Core AI/ML Libraries
 google-genai>=1.0.0
-requests>=2.28.0  # For Hugging Face Inference API
+requests>=2.28.0  # For Hugging Face Inference API & ElevenLabs
 
 # Image Generation (local models)
 torch>=2.0.0
@@ -22,3 +22,15 @@ gTTS>=2.4.0
 
 # Optional - ElevenLabs TTS
 elevenlabs>=0.2.0
+
+# Optional - GPT-4o Character DNA extraction
+openai>=1.0.0
+
+# Optional - Grok image/video (xAI)
+xai-sdk>=0.1.0
+
+# Optional - Kling video JWT auth
+python-jose>=3.3.0
+
+# Optional - FFmpeg composition backend
+imageio-ffmpeg>=0.4.0
